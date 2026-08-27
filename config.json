@@ -2,7 +2,7 @@
   "discord": {
     "clientId":     "1538720094916452466",
     "clientSecret": "qyrl-xdQ91DHkkeNZAgUEg9wdDRqy6Nv",
-    "redirectUri":  "https://revolution-back.vercel.app/auth/callback"
+    "redirectUri":  "https://revolution-5w6s.onrender.com/auth/callback"
   },
   "session": {
     "secret": "Pohfzgbu98G3YG381BN9tryç_éurçyéezfuizi"
