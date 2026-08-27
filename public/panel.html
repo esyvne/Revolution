@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Revolution · Panel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg:      #0a0a0b;
+      --surface: #111113;
+      --surface2:#18181b;
+      --hover:   #1e1e22;
+      --text:    #e4e4e7;
+      --text2:   #a1a1aa;
+      --muted:   #71717a;
+      --border:  rgba(255,255,255,0.06);
+      --border2: rgba(255,255,255,0.12);
+      --green:   #4ade80;
+      --red:     #f87171;
+      --r-sm:8px; --r-md:12px;
+    }
+    *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+    ::selection { background:rgba(255,255,255,0.12); color:#fff; }
+    ::-webkit-scrollbar { width:5px; }
+    ::-webkit-scrollbar-track { background:var(--bg); }
+    ::-webkit-scrollbar-thumb { background:var(--surface2); border-radius:3px; }
+    body {
+      font-family:'Space Grotesk',system-ui,sans-serif;
+      background:var(--bg); color:var(--text);
+      height:100vh; display:flex; flex-direction:column;
+      overflow:hidden; -webkit-font-smoothing:antialiased;
+    }
+
+    #topbar {
+      background:var(--bg); border-bottom:1px solid var(--border);
+      padding:0 1.75rem; height:52px; flex-shrink:0;
+      display:flex; align-items:center; gap:0.9rem;
+    }
+    .back {
+      display:inline-flex; align-items:center; gap:0.35rem;
+      font-size:0.75rem; font-weight:500; color:var(--muted);
+      background:var(--surface2); border:1px solid var(--border);
+      padding:0.35rem 0.75rem; border-radius:var(--r-sm);
+      text-decoration:none; transition:all .15s ease; font-family:inherit;
+    }
+    .back:hover { color:var(--text); border-color:var(--border2); }
+    .back i { font-size:0.65rem; }
+    .tb-logo { display:flex; align-items:center; gap:0.45rem; font-size:0.85rem; font-weight:700; }
+    .tb-logo svg { width:16px; height:16px; }
+    .tb-sep { width:1px; height:20px; background:var(--border); flex-shrink:0; }
+    .tb-thumb { width:26px; height:26px; border-radius:5px; object-fit:cover; border:1px solid var(--border); flex-shrink:0; }
+    .tb-game { font-weight:700; font-size:0.88rem; }
+    .tb-sid  { font-size:0.6rem; color:var(--muted); font-family:monospace; }
+
+
+    #tabs {
+      background:var(--bg); border-bottom:1px solid var(--border);
+      padding:0 1.75rem; display:flex; gap:0.1rem; flex-shrink:0;
+    }
+    .tab {
+      padding:0.7rem 1rem; font-size:0.78rem; font-weight:600;
+      color:var(--muted); background:none; border:none; cursor:pointer;
+      border-bottom:2px solid transparent; transition:color .15s, border-color .15s;
+      display:inline-flex; align-items:center; gap:0.35rem; font-family:inherit;
+    }
+    .tab i { font-size:0.7rem; }
+    .tab.active { color:var(--text); border-bottom-color:var(--text); }
+    .tab:hover  { color:var(--text); }
+
+    .panel { display:none; flex:1; overflow:hidden; flex-direction:column; }
+    .panel.active { display:flex; }
+
+    #console-out {
+      flex:1; overflow-y:auto; padding:1.1rem 1.75rem;
+      font-family:'Courier New',monospace; font-size:0.78rem; line-height:1.75;
+    }
+    .log { margin-bottom:0.9rem; }
+    .log-meta { display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem; }
+    .log-time { font-size:0.6rem; color:var(--muted); }
+    .log-st {
+      font-size:0.55rem; font-weight:700; text-transform:uppercase; letter-spacing:.5px;
+      padding:0.1rem 0.4rem; border-radius:999px;
+    }
+    .log-st.pending { color:#fbbf24; border:1px solid rgba(251,191,36,0.2); }
+    .log-st.done    { color:var(--green); border:1px solid rgba(74,222,128,0.2); }
+    .log-code {
+      background:var(--surface); border:1px solid var(--border);
+      border-left:2px solid var(--muted);
+      padding:0.45rem 0.85rem; border-radius:0 var(--r-sm) var(--r-sm) 0;
+      color:var(--text2); white-space:pre-wrap; word-break:break-all;
+    }
+    .log-out {
+      background:var(--surface); border:1px solid var(--border);
+      border-left:2px solid var(--green);
+      padding:0.45rem 0.85rem; border-radius:0 var(--r-sm) var(--r-sm) 0;
+      margin-top:0.25rem; color:var(--green); white-space:pre-wrap; word-break:break-all;
+    }
+    .log-out.err { border-left-color:var(--red); color:var(--red); }
+    #console-bar {
+      padding:0.9rem 1.75rem; border-top:1px solid var(--border);
+      background:var(--bg); display:flex; gap:0.65rem; align-items:flex-end; flex-shrink:0;
+    }
+    #console-in {
+      flex:1; background:var(--surface); border:1px solid var(--border);
+      color:var(--text); padding:0.6rem 0.9rem; border-radius:var(--r-md);
+      font-family:'Courier New',monospace; font-size:0.78rem;
+      outline:none; resize:none; height:72px; transition:border-color .15s;
+    }
+    #console-in:focus { border-color:var(--border2); }
+    #console-in::placeholder { color:var(--muted); }
+    #run-btn {
+      background:var(--surface2); border:1px solid var(--border);
+      color:var(--text); font-weight:600; font-size:0.78rem;
+      padding:0 1.1rem; border-radius:var(--r-sm); cursor:pointer;
+      height:34px; display:inline-flex; align-items:center; gap:0.35rem;
+      transition:all .15s ease; font-family:inherit;
+    }
+    #run-btn:hover { border-color:var(--border2); background:var(--hover); }
+    #run-btn i { font-size:0.65rem; }
+
+    #panel-explorer { padding:1.4rem 1.75rem; overflow-y:auto; }
+    .exp-note {
+      font-size:0.75rem; color:var(--muted);
+      padding:0.6rem 0.9rem; background:var(--surface);
+      border:1px solid var(--border); border-radius:var(--r-sm);
+      margin-bottom:1.1rem; display:flex; align-items:center; gap:0.4rem;
+    }
+    .exp-row { display:flex; gap:0.5rem; margin-bottom:0.6rem; flex-wrap:wrap; }
+    .exp-in {
+      flex:1; min-width:150px; background:var(--surface);
+      border:1px solid var(--border); color:var(--text);
+      padding:0.5rem 0.85rem; border-radius:var(--r-sm);
+      font-size:0.78rem; outline:none; font-family:inherit; transition:border-color .15s;
+    }
+    .exp-in:focus { border-color:var(--border2); }
+    .exp-in::placeholder { color:var(--muted); }
+    .exp-btn {
+      background:var(--surface); border:1px solid var(--border);
+      color:var(--text2); padding:0.5rem 0.9rem;
+      border-radius:var(--r-sm); font-size:0.78rem; font-weight:600;
+      cursor:pointer; white-space:nowrap; transition:all .15s ease;
+      display:inline-flex; align-items:center; gap:0.35rem; font-family:inherit;
+    }
+    .exp-btn:hover { color:var(--text); border-color:var(--border2); background:var(--surface2); }
+    .exp-btn.pri { background:var(--surface2); border-color:var(--border2); color:var(--text); }
+    .exp-btn.pri:hover { background:var(--hover); }
+    #exp-result {
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:var(--r-md); min-height:180px; padding:0.9rem;
+      font-family:'Courier New',monospace; font-size:0.78rem;
+      color:var(--text2); white-space:pre-wrap; word-break:break-all;
+    }
+
+    #panel-players { padding:1.4rem 1.75rem; overflow-y:auto; }
+    #players { display:flex; flex-direction:column; gap:0.45rem; }
+    .plrow {
+      display:flex; align-items:center; gap:0.85rem;
+      padding:0.7rem 0.95rem; background:var(--surface);
+      border:1px solid var(--border); border-radius:var(--r-md); transition:border-color .15s;
+    }
+    .plrow:hover { border-color:var(--border2); }
+    .avatar {
+      width:34px; height:34px; border-radius:50%;
+      background:var(--surface2); overflow:hidden; flex-shrink:0; border:1px solid var(--border);
+    }
+    .avatar img { width:100%; height:100%; object-fit:cover; }
+    .pl-name { font-weight:600; font-size:0.85rem; }
+    .pl-uid  { font-size:0.65rem; color:var(--muted); font-family:monospace; }
+    .pl-btns { margin-left:auto; display:flex; gap:0.35rem; }
+    .pl-btn {
+      font-size:0.65rem; font-weight:600; padding:0.2rem 0.55rem; border-radius:999px;
+      border:none; cursor:pointer; font-family:inherit; transition:opacity .15s;
+      text-decoration:none; display:inline-flex; align-items:center;
+    }
+    .pl-btn:hover { opacity:.75; }
+    .pl-btn.kick { color:var(--red);   border:1px solid rgba(248,113,113,0.3); background:rgba(248,113,113,0.08); }
+    .pl-btn.tp   { color:#a78bfa;      border:1px solid rgba(167,139,250,0.3); background:rgba(167,139,250,0.08); }
+    .pl-btn.prof { color:var(--muted); border:1px solid var(--border); background:var(--surface2); }
+
+    /* ── User pill ── */
+    #user-pill {
+      position:fixed; bottom:1rem; left:1rem; z-index:150;
+      display:flex; align-items:center; gap:0.6rem;
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:var(--r-md); padding:0.5rem 0.75rem;
+      min-width:160px; max-width:220px; transition:border-color .15s ease;
+    }
+    #user-pill:hover { border-color:var(--border2); }
+    #user-avatar {
+      width:32px; height:32px; border-radius:50%;
+      background:var(--surface2); overflow:hidden; flex-shrink:0; border:1px solid var(--border);
+    }
+    #user-avatar img { width:100%; height:100%; object-fit:cover; }
+    #user-info { flex:1; min-width:0; }
+    #user-name {
+      font-size:0.82rem; font-weight:600;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    #user-tag { font-size:0.65rem; color:var(--muted); }
+    .logout-btn {
+      background:none; border:none; color:var(--muted); cursor:pointer;
+      padding:0.2rem; border-radius:4px; font-size:0.7rem;
+      transition:color .15s ease; flex-shrink:0;
+    }
+    .logout-btn:hover { color:var(--red); }
+
+    @media(max-width:640px){
+      #topbar,#tabs,#console-bar,#panel-explorer,#panel-players { padding-left:1.1rem; padding-right:1.1rem; }
+      #console-out { padding:1rem 1.1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="topbar">
+  <a href="/" class="back"><i class="fas fa-chevron-left"></i> Dashboard</a>
+  <div class="tb-sep"></div>
+  <div class="tb-logo">
+    <svg viewBox="0 0 346 396" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M173 373L323 286.768V109.232L173 23L23 109.232V286.768L173 373ZM173 23V109.232M323 109.232L173 195.464L106.898 161.225L23 286.768M173 373L249.271 241.116" stroke="white" stroke-width="46" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Revolution
+  </div>
+  <div class="tb-sep"></div>
+  <img class="tb-thumb" id="tb-thumb" src="" alt="" style="display:none"/>
+  <div>
+    <div class="tb-game" id="tb-game">…</div>
+    <div class="tb-sid"  id="tb-sid"></div>
+  </div>
+</div>
+
+<div id="tabs">
+  <button class="tab active" onclick="switchTab('console',this)"><i class="fas fa-terminal"></i> Console</button>
+  <button class="tab"        onclick="switchTab('explorer',this)"><i class="fas fa-folder-tree"></i> Explorer</button>
+  <button class="tab"        onclick="switchTab('players',this)"><i class="fas fa-users"></i> Players</button>
+</div>
+
+<div class="panel active" id="panel-console">
+  <div id="console-out"></div>
+  <div id="console-bar">
+    <textarea id="console-in" placeholder="-- Lua script&#10;print(&quot;Hello!&quot;)"></textarea>
+    <button id="run-btn" onclick="execCode()"><i class="fas fa-play"></i> Run</button>
+  </div>
+</div>
+
+<div class="panel" id="panel-explorer">
+  <div class="exp-note"><i class="fas fa-circle-info"></i> Path example: <code style="color:var(--text)">workspace.Baseplate</code></div>
+  <div class="exp-row">
+    <input class="exp-in" id="exp-path" placeholder="Path e.g. workspace.Part"/>
+    <button class="exp-btn" onclick="expGet()"><i class="fas fa-eye"></i> Read</button>
+    <button class="exp-btn" onclick="expList()"><i class="fas fa-list"></i> Children</button>
+  </div>
+  <div class="exp-row" style="margin-bottom:.9rem">
+    <input class="exp-in" id="exp-prop"  placeholder="Property e.g. BrickColor"/>
+    <input class="exp-in" id="exp-value" placeholder="Value e.g. BrickColor.Red"/>
+    <button class="exp-btn pri" onclick="expSet()"><i class="fas fa-pen"></i> Set</button>
+  </div>
+  <div id="exp-result">-- Result here…</div>
+</div>
+
+<div class="panel" id="panel-players">
+  <div id="players"><div style="color:var(--muted);font-size:.82rem">Loading…</div></div>
+</div>
+
+<!-- User pill -->
+<div id="user-pill">
+  <div id="user-avatar"><img id="user-avatar-img" src="" alt=""/></div>
+  <div id="user-info">
+    <div id="user-name">…</div>
+    <div id="user-tag"></div>
+  </div>
+  <button class="logout-btn" title="Sign out" onclick="location.href='/auth/logout'">
+    <i class="fas fa-sign-out-alt"></i>
+  </button>
+</div>
+
+<script>
+const [,, GAME_ID, SERVER_ID] = location.pathname.split('/');
+const $   = id => document.getElementById(id);
+const esc = s  => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const fmt = ts => new Date(ts*1000).toLocaleTimeString();
+const sleep = ms => new Promise(r => setTimeout(r,ms));
+const isErr = s => s && (s.startsWith('ERROR:') || s.startsWith('LOAD ERROR:'));
+
+async function loadUser() {
+  try {
+    const me = await fetch('/api/me').then(r => r.json());
+    $('user-name').textContent = me.username;
+    $('user-tag').textContent  = me.discriminator && me.discriminator !== '0'
+      ? `#${me.discriminator}`
+      : 'Discord';
+    const avatarUrl = me.avatar
+      ? `https://cdn.discordapp.com/avatars/${me.id}/${me.avatar}.png?size=64`
+      : `https://cdn.discordapp.com/embed/avatars/0.png`;
+    $('user-avatar-img').src = avatarUrl;
+  } catch(_) {}
+}
+
+(async () => {
+  try {
+    const g = await fetch(`/api/games/${GAME_ID}`).then(r=>r.json());
+    $('tb-game').textContent = g.gameName;
+    $('tb-sid').textContent  = SERVER_ID;
+    document.title = `${g.gameName} · Revolution`;
+    if (g.gameThumb) { const img=$('tb-thumb'); img.src=g.gameThumb; img.style.display=''; }
+  } catch(_) {}
+})();
+
+function switchTab(name, btn) {
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  $('panel-'+name).classList.add('active');
+  btn.classList.add('active');
+}
+
+async function loadConsole() {
+  try {
+    const logs = await fetch(`/api/console/${GAME_ID}/${SERVER_ID}`).then(r=>r.json());
+    renderConsole(logs);
+  } catch(_) {}
+}
+
+function renderConsole(logs) {
+  const out = $('console-out');
+  if (!logs.length) {
+    out.innerHTML = '<div style="color:var(--muted);font-size:.75rem;padding:.4rem 0">No commands executed yet…</div>';
+    return;
+  }
+  out.innerHTML = '';
+  for (const l of logs) {
+    const d = document.createElement('div');
+    d.className = 'log';
+    d.innerHTML = `
+      <div class="log-meta">
+        <span class="log-time">${fmt(l.ts)}</span>
+        <span class="log-st ${l.status}">${l.status==='done' ? 'Done' : 'Pending'}</span>
+      </div>
+      <div class="log-code">${esc(l.code)}</div>
+      ${l.output ? `<div class="log-out${isErr(l.output)?' err':''}">${esc(l.output)}</div>` : ''}`;
+    out.appendChild(d);
+  }
+  out.scrollTop = out.scrollHeight;
+}
+
+async function execCode() {
+  const code = $('console-in').value.trim();
+  if (!code) return;
+  $('console-in').value = '';
+  const {id} = await fetch('/api/exec', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({gameId:GAME_ID, serverId:SERVER_ID, code}),
+  }).then(r=>r.json());
+  if (id) {
+    for (let i=0;i<20;i++) {
+      await sleep(1000);
+      const d = await fetch(`/api/exec/${id}/result`).then(r=>r.json());
+      if (d.status==='done') { loadConsole(); return; }
+    }
+    loadConsole();
+  }
+}
+
+$('console-in').addEventListener('keydown', e => {
+  if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); execCode(); }
+});
+
+async function expRun(code) {
+  $('exp-result').textContent = '-- Running…';
+  const {id} = await fetch('/api/exec', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({gameId:GAME_ID, serverId:SERVER_ID, code}),
+  }).then(r=>r.json());
+  if (!id) return;
+  for (let i=0;i<15;i++) {
+    await sleep(1000);
+    const d = await fetch(`/api/exec/${id}/result`).then(r=>r.json());
+    if (d.status==='done') { $('exp-result').textContent = d.output||'(empty)'; return; }
+  }
+  $('exp-result').textContent = 'Timeout — no response from server.';
+}
+
+function expGet() {
+  const p = $('exp-path').value.trim(); if (!p) return;
+  expRun(`local parts=string.split("${p}",".")
+local cur=game for _,p in ipairs(parts) do local f=cur:FindFirstChild(p) if not f then return "NOT FOUND: "..p end cur=f end
+return cur.ClassName.." | "..cur.Name`);
+}
+function expList() {
+  const p = $('exp-path').value.trim()||'workspace';
+  expRun(`local parts=string.split("${p}",".")
+local cur=game for _,x in ipairs(parts) do local f=cur:FindFirstChild(x) if not f then return "NOT FOUND: "..x end cur=f end
+local out={} for _,c in ipairs(cur:GetChildren()) do table.insert(out,"["..c.ClassName.."] "..c.Name) end
+return #out.." children:\\n"..table.concat(out,"\\n")`);
+}
+function expSet() {
+  const p=$('exp-path').value.trim(), prop=$('exp-prop').value.trim(), val=$('exp-value').value.trim();
+  if (!p||!prop||!val) return;
+  expRun(`local parts=string.split("${p}",".")
+local cur=game for _,x in ipairs(parts) do local f=cur:FindFirstChild(x) if not f then return "NOT FOUND: "..x end cur=f end
+cur["${prop}"]=${val} return "OK: ${p}.${prop} = ${val}"`);
+}
+
+async function loadPlayers() {
+  try {
+    const sv = await fetch(`/api/games/${GAME_ID}/servers/${SERVER_ID}`).then(r=>r.json());
+    renderPlayers(sv.players||[]);
+  } catch(_) {}
+}
+
+function renderPlayers(players) {
+  const list = $('players');
+  if (!players.length) { list.innerHTML='<div style="color:var(--muted);font-size:.82rem">No players connected.</div>'; return; }
+  list.innerHTML='';
+  for (const p of players) {
+    const row=document.createElement('div');
+    row.className='plrow';
+    row.innerHTML=`
+      <div class="avatar"><img src="/api/avatar/${p.userId}" alt="${esc(p.name)}" onerror="this.style.display='none'"/></div>
+      <div>
+        <div class="pl-name">${esc(p.name)}</div>
+        <div class="pl-uid">UID: ${p.userId}</div>
+      </div>
+      <div class="pl-btns">
+        <button class="pl-btn kick" onclick="plAction('kick','${esc(p.name)}')">Kick</button>
+        <button class="pl-btn tp"   onclick="plAction('tp','${esc(p.name)}')">TP</button>
+        <a class="pl-btn prof" href="https://www.roblox.com/users/${p.userId}/profile" target="_blank">Profile</a>
+      </div>`;
+    list.appendChild(row);
+  }
+}
+
+function plAction(action, name) {
+  let code='';
+  if (action==='kick') {
+    code=`local p=game.Players:FindFirstChild("${name}") if p then p:Kick("Kicked from Revolution") end`;
+  } else {
+    const dest=prompt('Destination (x,y,z):','0,100,0'); if (!dest) return;
+    const [x,y,z]=dest.split(',').map(Number);
+    code=`local p=game.Players:FindFirstChild("${name}") if p and p.Character then p.Character.HumanoidRootPart.CFrame=CFrame.new(${x},${y},${z}) end`;
+  }
+  fetch('/api/exec',{
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({gameId:GAME_ID, serverId:SERVER_ID, code}),
+  }).then(()=>switchTab('console',document.querySelectorAll('.tab')[0]));
+}
+
+loadUser();
+loadConsole();  loadPlayers();
+setInterval(loadConsole, 3000);
+setInterval(loadPlayers, 3000);
+</script>
+</body>
+</html>
