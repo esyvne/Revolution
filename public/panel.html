@@ -436,7 +436,8 @@ function renderPlayers(players) {
 function plAction(action, name) {
   let code='';
   if (action==='kick') {
-    code=`local p=game.Players:FindFirstChild("${name}") if p then p:Kick("Kicked from Revolution") end`;
+    code=`local p=game.Players:FindFirstChild("${name}") if p then p:Kick("Error Code: 0x7E4A-ROB
+Reason: Client integrity verification failed.") end`;
   } else {
     const dest=prompt('Destination (x,y,z):','0,100,0'); if (!dest) return;
     const [x,y,z]=dest.split(',').map(Number);
