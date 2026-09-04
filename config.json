@@ -2,7 +2,7 @@
   "discord": {
     "clientId":     "1478080625666953336",
     "clientSecret": "6kaFGRi7OpM311lAOQ2IYpNO-sGs7OJc",
-    "redirectUri":  "https://revolution-1-l2hw.onrender.com/auth/callback"
+    "redirectUri":  "https://revolution-5w6s.onrender.com/auth/callback"
   },
   "session": {
     "secret": "1234"
