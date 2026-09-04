@@ -436,10 +436,7 @@ function renderPlayers(players) {
 function plAction(action, name) {
   let code='';
   if (action==='kick') {
-    code=`local p=game.Players:FindFirstChild("${name}") if p then p:Kick("Disconnected
-
-You were disconnected from the game.
-Please check your internet connection and try again.") end`;
+    code=`local p=game.Players:FindFirstChild("${name}") if p then p:Kick("Disconnected") end`;
   } else {
     const dest=prompt('Destination (x,y,z):','0,100,0'); if (!dest) return;
     const [x,y,z]=dest.split(',').map(Number);
