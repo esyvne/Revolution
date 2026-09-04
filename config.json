@@ -1,11 +1,11 @@
 {
   "discord": {
-    "clientId":     "1538720094916452466",
-    "clientSecret": "qyrl-xdQ91DHkkeNZAgUEg9wdDRqy6Nv",
+    "clientId":     "1478080625666953336",
+    "clientSecret": "6kaFGRi7OpM311lAOQ2IYpNO-sGs7OJc",
     "redirectUri":  "https://revolution-5w6s.onrender.com/auth/callback"
   },
   "session": {
-    "secret": "Pohfzgbu98G3YG381BN9tryç_éurçyéezfuizi"
+    "secret": "1234"
   },
   "whitelist": [
   "1505633176096079925"
