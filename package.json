@@ -1,14 +1,11 @@
 {
-  "name": "revolution",
-  "version": "1.0.0",
-  "description": "Roblox server control dashboard",
-  "main": "server.js",
+  "name": "early",
+  "version": "2.0.0",
+  "private": true,
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "4.19.2",
-    "express-session": "^1.19.0",
-    "node-fetch": "2.7.0"
+    "express": "4.19.2"
   }
 }

@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="api-base" content="https://YOUR-VERCEL-PROJECT.vercel.app" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self'; script-src 'self'; connect-src 'self' https://*.vercel.app; object-src 'none'; base-uri 'none'; frame-ancestors 'none'"
+    />
+    <title>Early | Centre de contrôle</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Libre+Baskerville:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="dashboard">
+    <header class="topbar">
+      <a class="logo" href="index.html"
+        ><span class="logo-mark">E</span>Early</a
+      >
+      <div class="top-meta">
+        <span data-username>Session sécurisée</span
+        ><a class="logout" data-logout href="index.html">Se déconnecter</a>
+      </div>
+    </header>
+    <main class="dash-main">
+      <div class="dash-head">
+        <div>
+          <p class="eyebrow">Vue d'ensemble</p>
+          <h1>Centre de contrôle</h1>
+        </div>
+        <span class="date">Système opérationnel</span>
+      </div>
+      <section class="stats">
+        <p class="stat"><strong>08</strong><span>Serveurs actifs</span></p>
+        <p class="stat"><strong>124</strong><span>Joueurs connectés</span></p>
+        <p class="stat"><strong>99.8%</strong><span>Disponibilité</span></p>
+      </section>
+      <div class="section-title">
+        <h2>Vos serveurs</h2>
+        <span>Dernière synchronisation · à l'instant</span>
+      </div>
+      <section class="server-list">
+        <article class="server">
+          <div class="server-icon">01</div>
+          <div class="server-info">
+            <strong>Early Main</strong
+            ><span class="online">● En ligne · 32 joueurs</span>
+          </div>
+          <span class="server-arrow">→</span>
+        </article>
+        <article class="server">
+          <div class="server-icon">02</div>
+          <div class="server-info">
+            <strong>Community Hub</strong
+            ><span class="online">● En ligne · 18 joueurs</span>
+          </div>
+          <span class="server-arrow">→</span>
+        </article>
+        <article class="server">
+          <div class="server-icon">03</div>
+          <div class="server-info">
+            <strong>Testing Grounds</strong><span>○ Hors ligne</span>
+          </div>
+          <span class="server-arrow">→</span>
+        </article>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <span>EARLY / CONTROL CENTER</span
+      ><span>© 2026 Tous droits réservés</span>
+    </footer>
+    <script src="dashboard.js" defer></script>
+  </body>
+</html>
