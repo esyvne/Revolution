@@ -60,7 +60,12 @@ function cookies(req) {
 }
 
 function setCors(res) {
-  const origin = process.env.FRONTEND_ORIGIN?.replace(/\/$/, "");
+  let origin = process.env.FRONTEND_ORIGIN;
+  try {
+    origin = origin ? new URL(origin).origin : "";
+  } catch (_) {
+    origin = "";
+  }
   if (origin) res.setHeader("Access-Control-Allow-Origin", origin);
   res.setHeader("Access-Control-Allow-Credentials", "true");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
